@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp (name = "TeleOp")
+@TeleOp (name = "Teleop")
 public class NewTele extends LinearOpMode {
 
     Robot robot;
@@ -84,6 +84,8 @@ public class NewTele extends LinearOpMode {
 
 
         //GAMEPAD 2 -- THE SIDE BITCH
+
+
         if (gamepad2.left_trigger <= 0.05) {
             armPower = (gamepad2.right_trigger /1.5);
         } else if (gamepad2.right_trigger <= 0.05) {
@@ -96,19 +98,33 @@ public class NewTele extends LinearOpMode {
         intakePowerL = gamepad2.right_stick_y;
 
         if (gamepad2.right_bumper){
-            robot.intakeHold.setPosition(0.9);
+            robot.intakeHold.setPosition(1);
         }
         else{
-            robot.intakeHold.setPosition(0.5);
+            robot.intakeHold.setPosition(0);
         }
 
-        if (gamepad1.right_trigger >= 0.05) {
-            robot.hangingMotor.setPower(gamepad1.right_trigger);
-        } else if (gamepad1.left_trigger >= 0.05) {
-            robot.hangingMotor.setPower(-gamepad1.left_trigger);
-        }else{
+        if (robot.topLift.getState() == true && robot.bottomLift.getState() == true) {
+            if (gamepad1.right_trigger <= 0.05) {
+                robot.hangingMotor.setPower(gamepad1.left_trigger);
+            }
+            if (gamepad1.left_trigger <= 0.05){
+                robot.hangingMotor.setPower(-gamepad1.right_trigger);
+            }
+        }else if (robot.topLift.getState() == false && robot.bottomLift.getState() == true){
+            robot.hangingMotor.setPower(0.5);
+            pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+            sleep(150);
             robot.hangingMotor.setPower(0);
+            sleep(500);
+        }else if (robot.topLift.getState() == true && robot.bottomLift.getState()== false){
+            robot.hangingMotor.setPower(-0.5);
+            pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+            sleep(150);
+            robot.hangingMotor.setPower(0);
+            sleep(500);
         }
+
 
         xrailPower=(gamepad2.left_stick_y);
         robot.xrailMotor.setPower(xrailPower);
