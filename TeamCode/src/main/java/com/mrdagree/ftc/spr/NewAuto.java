@@ -111,17 +111,22 @@ public class NewAuto extends LinearOpMode
             switch (step){
                 //UNLATCHING
                 case 0:
-                    robot.hangingMotor.setPower(1.0);
-                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
-                    sleep(8250);
-                    robot.hangingMotor.setPower(0.0);
-                    sleep(300);
-                    move(0.4,0.5, 1.0, direction.LEFT);
-                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                    sleep(300);
-                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                    step = 1;
-                    break;
+                    if (robot.bottomLift.getState() == true) {
+                        robot.hangingMotor.setPower(1.0);
+                        robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
+                    }
+                    else if (robot.bottomLift.getState() == false) {
+                        robot.hangingMotor.setPower(-0.25);
+                        sleep(300);
+                        robot.hangingMotor.setPower(0);
+                        sleep(300);
+                        move(0.4, 0.5, 1.0, direction.LEFT);
+                        robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                        sleep(300);
+                        robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
+                        step = 1;
+                        break;
+                    }
                 //MOVE FORWARD AND TURN TO THE LEFT
                 case 1:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);

@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.SensorMRGyro;
@@ -42,6 +43,8 @@ public class Robot {
 
     //public DigitalChannel rightMagSwitch;
     public GyroSensor armGyro;
+    public DigitalChannel topLift;
+    public DigitalChannel bottomLift;
 
     // The IMU sensor object
     public BNO055IMU imu;
@@ -50,6 +53,11 @@ public class Robot {
 
     public Robot(HardwareMap hardwareMap){
         theGoodStuff = hardwareMap.get(RevBlinkinLedDriver.class, "ledDriver");
+        topLift = hardwareMap.get(DigitalChannel.class, "topLift");
+        bottomLift = hardwareMap.get(DigitalChannel.class, "bottomLift");
+        topLift.setMode(DigitalChannel.Mode.INPUT);
+        bottomLift.setMode(DigitalChannel.Mode.INPUT);
+
 
         //Drive Motors
         frontLeft = hardwareMap.dcMotor.get("lfWheel");
