@@ -110,26 +110,25 @@ public class NewAuto extends LinearOpMode
                 case 0:
                     // Should get hanging going
                     if (!robot.bottomLift.getState() && robot.topLift.getState()) {
-                        robot.hangingMotor.setPower(1.0);
+                        robot.hangingMotor.setPower(-1.0);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
                     }else if (robot.bottomLift.getState() && robot.topLift.getState()){
                         // Senses that both the magnetic limit switches arent triggered so keeps power to decend.
-                        robot.hangingMotor.setPower(1.0);
+                        robot.hangingMotor.setPower(-1.0);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
                     }
                     else if (!robot.topLift.getState() && robot.bottomLift.getState()) {
                         // Senses that the top is triggered and bottom is not thus the lift should be at the top.
-                        robot.hangingMotor.setPower(-0.25);
+                        robot.hangingMotor.setPower(0.25);
                         sleep(300);
                         robot.hangingMotor.setPower(0);
                         sleep(300);
-                        move(0.4, 0.5, 1.0, direction.LEFT);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
                         sleep(300);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                        
-                        break;
+                        step=1;
                     }
+                    break;
                 //MOVE FORWARD AND TURN TO THE LEFT
                 case 1:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);
