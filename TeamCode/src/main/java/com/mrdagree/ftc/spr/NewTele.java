@@ -103,26 +103,29 @@ public class NewTele extends LinearOpMode {
         else{
             robot.intakeHold.setPosition(0);
         }
-
-        if (robot.topLift.getState() == true && robot.bottomLift.getState() == true) {
-            if (gamepad1.right_trigger <= 0.05) {
-                robot.hangingMotor.setPower(gamepad1.left_trigger);
+        if (gamepad1.right_trigger<=0.05 && gamepad1.a){
+            robot.hangingMotor.setPower(gamepad1.left_trigger);
+        }else {
+            if (robot.topLift.getState() && robot.bottomLift.getState()) {
+                if (gamepad1.right_trigger <= 0.05) {
+                    robot.hangingMotor.setPower(gamepad1.left_trigger);
+                }
+                if (gamepad1.left_trigger <= 0.05) {
+                    robot.hangingMotor.setPower(-gamepad1.right_trigger);
+                }
+            } else if (!robot.topLift.getState() && robot.bottomLift.getState()) {
+                robot.hangingMotor.setPower(0.5);
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                sleep(150);
+                robot.hangingMotor.setPower(0);
+                sleep(500);
+            } else if (robot.topLift.getState() && !robot.bottomLift.getState()) {
+                robot.hangingMotor.setPower(-0.5);
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                sleep(150);
+                robot.hangingMotor.setPower(0);
+                sleep(500);
             }
-            if (gamepad1.left_trigger <= 0.05){
-                robot.hangingMotor.setPower(-gamepad1.right_trigger);
-            }
-        }else if (robot.topLift.getState() == false && robot.bottomLift.getState() == true){
-            robot.hangingMotor.setPower(0.5);
-            pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
-            sleep(150);
-            robot.hangingMotor.setPower(0);
-            sleep(500);
-        }else if (robot.topLift.getState() == true && robot.bottomLift.getState()== false){
-            robot.hangingMotor.setPower(-0.5);
-            pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
-            sleep(150);
-            robot.hangingMotor.setPower(0);
-            sleep(500);
         }
 
 
