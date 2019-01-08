@@ -36,11 +36,6 @@ public class Robot {
     public Servo markerServo;
     public CRServo intakeServoL;
 
-    //Range Sensors
-    public DistanceSensor frontDistance;
-    public DistanceSensor rightDistance;
-    public DistanceSensor backDistance;
-
     //public DigitalChannel rightMagSwitch;
     public GyroSensor armGyro;
     public DigitalChannel topLift;

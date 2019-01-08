@@ -44,7 +44,7 @@ public class NewTele extends LinearOpMode {
 
 
 
-        telemetry.addData("Waiting for Everything to Fall Apart:", "Initialization Stage");
+        telemetry.addData("Nothing will fall apart:", "Initialization Stage");
         telemetry.update();
 
 
@@ -62,12 +62,11 @@ public class NewTele extends LinearOpMode {
 
         //GAMEPAD 1 -- THE DRIVER
 
-        if (gamepad1.left_bumper){
+        if (gamepad1.left_bumper) {
             getJoyValuesReversed();
             pattern = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED;
 
-        }
-        else{
+        } else {
             getJoyValues();
             pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
 
@@ -75,7 +74,7 @@ public class NewTele extends LinearOpMode {
 
         if (gamepad1.b) {
             robot.markerServo.setPosition(0);
-        }else{
+        } else {
             robot.markerServo.setPosition(0.8);
         }
 
@@ -87,9 +86,9 @@ public class NewTele extends LinearOpMode {
 
 
         if (gamepad2.left_trigger <= 0.05) {
-            armPower = (gamepad2.right_trigger /1.5);
+            armPower = (gamepad2.right_trigger / 1.5);
         } else if (gamepad2.right_trigger <= 0.05) {
-            armPower = (-gamepad2.left_trigger /1.5);
+            armPower = (-gamepad2.left_trigger / 1.5);
         }
         if (gamepad2.left_bumper) {
             armPower = (0.2);
@@ -97,15 +96,15 @@ public class NewTele extends LinearOpMode {
 
         intakePowerL = gamepad2.right_stick_y;
 
-        if (gamepad2.right_bumper){
+        if (gamepad2.right_bumper) {
             robot.intakeHold.setPosition(1);
-        }
-        else{
+        } else {
             robot.intakeHold.setPosition(0);
         }
-        if (gamepad1.right_trigger<=0.05 && gamepad1.a){
+
+        if (gamepad1.right_trigger <= 0.05 && gamepad1.a) {
             robot.hangingMotor.setPower(gamepad1.left_trigger);
-        }else {
+        } else {
             if (robot.topLift.getState() && robot.bottomLift.getState()) {
                 if (gamepad1.right_trigger <= 0.05) {
                     robot.hangingMotor.setPower(gamepad1.left_trigger);
@@ -126,26 +125,45 @@ public class NewTele extends LinearOpMode {
                 robot.hangingMotor.setPower(0);
                 sleep(500);
             }
+
+            if (robot.topLift.getState() && robot.bottomLift.getState()) {
+                if (gamepad1.right_trigger <= 0.05) {
+                    robot.hangingMotor.setPower(gamepad1.left_trigger);
+                }
+                if (gamepad1.left_trigger <= 0.05) {
+                    robot.hangingMotor.setPower(-gamepad1.right_trigger);
+                }
+            } else if (!robot.topLift.getState() && robot.bottomLift.getState()) {
+                robot.hangingMotor.setPower(0.5);
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                sleep(150);
+                robot.hangingMotor.setPower(0);
+                sleep(500);
+            } else if (robot.topLift.getState() && !robot.bottomLift.getState()) {
+                robot.hangingMotor.setPower(-0.5);
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                sleep(150);
+                robot.hangingMotor.setPower(0);
+                sleep(500);
+            }
+
+
+            xrailPower = (gamepad2.left_stick_y);
+            robot.xrailMotor.setPower(xrailPower);
+
+
+            robot.armMotor.setPower(armPower);
+            robot.armMotor2.setPower(armPower);
+            robot.intakeServoL.setPower(intakePowerL);
+
+            robot.theGoodStuff.setPattern(pattern);
+
+
+            telemetry.addData("Waiting for Everything to Fall Apart:", "TeleOP Stage");
+            telemetry.addData("LED PATTERN", pattern.toString());
+            telemetry.update();
+
         }
-
-
-        xrailPower=(gamepad2.left_stick_y);
-        robot.xrailMotor.setPower(xrailPower);
-
-
-
-
-        robot.armMotor.setPower(armPower);
-        robot.armMotor2.setPower(armPower);
-        robot.intakeServoL.setPower(intakePowerL);
-
-        robot.theGoodStuff.setPattern(pattern);
-
-
-        telemetry.addData("Waiting for Everything to Fall Apart:", "TeleOP Stage");
-        telemetry.addData("LED PATTERN", pattern.toString());
-        telemetry.update();
-
     }
 
     public void getJoyValues() {
