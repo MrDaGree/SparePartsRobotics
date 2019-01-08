@@ -88,10 +88,7 @@ public class NewAuto extends LinearOpMode
             if (gamepad1.a)
                 craterSide = !craterSide;
 
-            if (gamepad1.right_bumper)
-                robot.hangingMotor.setPower(-1.0);
-            else
-                robot.hangingMotor.setPower(0.0);
+            robot.hangingMotor.setPower(gamepad1.right_trigger);
 
             robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER);
 
@@ -111,11 +108,11 @@ public class NewAuto extends LinearOpMode
             switch (step){
                 //UNLATCHING
                 case 0:
-                    if (robot.bottomLift.getState() == true) {
+                    if (robot.topLift.getState()) {
                         robot.hangingMotor.setPower(1.0);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
                     }
-                    else if (robot.bottomLift.getState() == false) {
+                    else if (!robot.topLift.getState()) {
                         robot.hangingMotor.setPower(-0.25);
                         sleep(300);
                         robot.hangingMotor.setPower(0);
