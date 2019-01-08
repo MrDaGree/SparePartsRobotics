@@ -111,6 +111,7 @@ public class NewAuto extends LinearOpMode
                     if (robot.topLift.getState()) {
                         robot.hangingMotor.setPower(1.0);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
+                        sleep(2350);
                     }
                     else if (!robot.topLift.getState()) {
                         robot.hangingMotor.setPower(-0.25);
