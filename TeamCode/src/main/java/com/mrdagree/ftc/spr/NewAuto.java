@@ -88,6 +88,11 @@ public class NewAuto extends LinearOpMode
             if (gamepad1.a)
                 craterSide = !craterSide;
 
+            if (robot.bottomLift.getState()) {
+                robot.hangingMotor.setPower(-1.0);
+                robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
+            }else{ robot.hangingMotor.setPower(0.0); }
+
             robot.hangingMotor.setPower(gamepad1.right_trigger);
 
             robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER);
@@ -110,43 +115,43 @@ public class NewAuto extends LinearOpMode
                 case 0:
                     // Should get hanging going
                     if (!robot.bottomLift.getState() && robot.topLift.getState()) {
-                        robot.hangingMotor.setPower(-1.0);
+                        robot.hangingMotor.setPower(1.0);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
                     }else if (robot.bottomLift.getState() && robot.topLift.getState()){
                         // Senses that both the magnetic limit switches arent triggered so keeps power to decend.
-                        robot.hangingMotor.setPower(-1.0);
+                        robot.hangingMotor.setPower(1.0);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
                     }
                     else if (!robot.topLift.getState() && robot.bottomLift.getState()) {
                         // Senses that the top is triggered and bottom is not thus the lift should be at the top.
-                        robot.hangingMotor.setPower(0.25);
+                        robot.hangingMotor.setPower(-0.25);
                         sleep(300);
                         robot.hangingMotor.setPower(0);
                         sleep(300);
+                        move(0.4,0.5,1.0, direction.LEFT);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
                         sleep(300);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                        step=1;
+                        step = 1;
                     }
                     break;
                 //MOVE FORWARD AND TURN TO THE LEFT
                 case 1:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);
                     move(DRIVE_SPEED, 1.505, 1.0, direction.FORWARD);
-                    gyroTurn(DRIVE_SPEED, 85, 0);
-                    sleep(800);
+                    sleep(500);
                     step = 2;
                     break;
-                //MIDDLE CHECK, CUZ WHY NOT WE HERE ANYWAYS
+//                //MIDDLE CHECK, CUZ WHY NOT WE HERE ANYWAYS
                 case 2:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                    sleep(1500);
+                    sleep(1000);
                     while (middleCheck <= 150)
                     {
                         telemetry.addData("Middle Check", middleCheck);
                         telemetry.update();
                         if (checkForGold()){
-                            step = 8;
+                            step = 21;
                             break;
                         }else{ middleCheck += 1; }
                     }
@@ -154,22 +159,24 @@ public class NewAuto extends LinearOpMode
                         step = 3;
 
                     break;
-                //MOVE TO THE RIGHT SPOT, ONLY CUZ IT WASNT IN THE MIDDLE ALREADY
+//                //MOVE TO THE RIGHT SPOT, ONLY CUZ IT WASNT IN THE MIDDLE ALREADY
                 case 3:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                    move(DRIVE_SPEED, 1.5, 1.0, direction.BACKWARD);
+                    move(0.4, 2.8, 1.0, direction.RIGHT);
+                    sleep(300);
+                    gyroTurn(DRIVE_SPEED, 1.0, 0);
                     step = 4;
                     break;
-                //RIGHT SIDE CHECK
+//                //RIGHT SIDE CHECK
                 case 4:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                    sleep(1500);
+                    sleep(1000);
                     while (rightCheck <= 150)
                     {
                         telemetry.addData("Right Check", rightCheck);
                         telemetry.update();
                         if (checkForGold()){
-                            step = 8;
+                            step = 21;
                             break;
                         }else{ rightCheck += 1; }
                     }
@@ -177,18 +184,16 @@ public class NewAuto extends LinearOpMode
                         step = 5;
 
                     break;
-                case 5:
+//                case 5:
+//                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+//                    move(DRIVE_SPEED, 2.5, 1.0, direction.FORWARD);
+//                    step = 8;
+//                    break;
+//
+//                // IF IT FINDS THE CUBE IT RUNS THIS AND THEN GOES TO STEP 21
+//                // ALSO IF IT CANNOT FIND IT IN ANY OF THE OTHER SPOTS IT RUNS THIS ON LEFT SIDE
+                case 21:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                    move(DRIVE_SPEED, 2.5, 1.0, direction.FORWARD);
-                    step = 8;
-                    break;
-
-                // IF IT FINDS THE CUBE IT RUNS THIS AND THEN GOES TO STEP 9
-                // ALSO IF IT CANNOT FIND IT IN ANY OF THE OTHER SPOTS IT RUNS THIS ON LEFT SIDE
-                case 8:
-                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                    move(DRIVE_SPEED, 0.3, 1.0, direction.BACKWARD);
-                    gyroTurn(DRIVE_SPEED, 1.0, 0);
                     move(DRIVE_SPEED, 1.4, 1.0, direction.FORWARD);
                     step = 9;
                     break;

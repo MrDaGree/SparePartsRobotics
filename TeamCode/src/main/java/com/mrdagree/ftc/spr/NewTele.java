@@ -102,68 +102,29 @@ public class NewTele extends LinearOpMode {
             robot.intakeHold.setPosition(0);
         }
 
-        if (gamepad1.right_trigger <= 0.05 && gamepad1.a) {
+
+        if (gamepad1.right_trigger <= 0.05) {
             robot.hangingMotor.setPower(gamepad1.left_trigger);
-        } else {
-            if (robot.topLift.getState() && robot.bottomLift.getState()) {
-                if (gamepad1.right_trigger <= 0.05) {
-                    robot.hangingMotor.setPower(gamepad1.left_trigger);
-                }
-                if (gamepad1.left_trigger <= 0.05) {
-                    robot.hangingMotor.setPower(-gamepad1.right_trigger);
-                }
-            } else if (!robot.topLift.getState() && robot.bottomLift.getState()) {
-                robot.hangingMotor.setPower(0.5);
-                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
-                sleep(150);
-                robot.hangingMotor.setPower(0);
-                sleep(500);
-            } else if (robot.topLift.getState() && !robot.bottomLift.getState()) {
-                robot.hangingMotor.setPower(-0.5);
-                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
-                sleep(150);
-                robot.hangingMotor.setPower(0);
-                sleep(500);
-            }
-
-            if (robot.topLift.getState() && robot.bottomLift.getState()) {
-                if (gamepad1.right_trigger <= 0.05) {
-                    robot.hangingMotor.setPower(gamepad1.left_trigger);
-                }
-                if (gamepad1.left_trigger <= 0.05) {
-                    robot.hangingMotor.setPower(-gamepad1.right_trigger);
-                }
-            } else if (!robot.topLift.getState() && robot.bottomLift.getState()) {
-                robot.hangingMotor.setPower(0.5);
-                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
-                sleep(150);
-                robot.hangingMotor.setPower(0);
-                sleep(500);
-            } else if (robot.topLift.getState() && !robot.bottomLift.getState()) {
-                robot.hangingMotor.setPower(-0.5);
-                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
-                sleep(150);
-                robot.hangingMotor.setPower(0);
-                sleep(500);
-            }
-
-
-            xrailPower = (gamepad2.left_stick_y);
-            robot.xrailMotor.setPower(xrailPower);
-
-
-            robot.armMotor.setPower(armPower);
-            robot.armMotor2.setPower(armPower);
-            robot.intakeServoL.setPower(intakePowerL);
-
-            robot.theGoodStuff.setPattern(pattern);
-
-
-            telemetry.addData("Waiting for Everything to Fall Apart:", "TeleOP Stage");
-            telemetry.addData("LED PATTERN", pattern.toString());
-            telemetry.update();
-
         }
+        if (gamepad1.left_trigger <= 0.05) {
+            robot.hangingMotor.setPower(gamepad1.right_trigger);
+        }
+
+
+        xrailPower = (gamepad2.left_stick_y);
+        robot.xrailMotor.setPower(xrailPower);
+
+
+        robot.armMotor.setPower(armPower);
+        robot.armMotor2.setPower(armPower);
+        robot.intakeServoL.setPower(intakePowerL);
+
+        robot.theGoodStuff.setPattern(pattern);
+
+
+        telemetry.addData("Waiting for Everything to Fall Apart:", "TeleOP Stage");
+        telemetry.addData("LED PATTERN", pattern.toString());
+        telemetry.update();
     }
 
     public void getJoyValues() {
