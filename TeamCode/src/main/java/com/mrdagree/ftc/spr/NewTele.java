@@ -91,7 +91,7 @@ public class NewTele extends LinearOpMode {
             armPower = (-gamepad2.left_trigger / 1.5);
         }
         if (gamepad2.left_bumper) {
-            armPower = (0.2);
+            armPower = (0.13);
         }
 
         intakePowerL = gamepad2.right_stick_y;
@@ -104,7 +104,7 @@ public class NewTele extends LinearOpMode {
 
 
         if (gamepad1.right_trigger <= 0.05) {
-            robot.hangingMotor.setPower(gamepad1.left_trigger);
+            robot.hangingMotor.setPower(-gamepad1.left_trigger);
         }
         if (gamepad1.left_trigger <= 0.05) {
             robot.hangingMotor.setPower(gamepad1.right_trigger);

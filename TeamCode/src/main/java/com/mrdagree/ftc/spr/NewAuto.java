@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.vuforia.CameraDevice;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -35,7 +36,14 @@ public class NewAuto extends LinearOpMode
       ROTATE_RIGHT
     };
 
+    public enum goldLocation {
+        MIDDLE,
+        RIGHT,
+        LEFT,
+        UNKNOWN
+    };
 
+    goldLocation location = goldLocation.UNKNOWN;
     boolean craterSide = true;
 
     Robot robot;
@@ -84,6 +92,8 @@ public class NewAuto extends LinearOpMode
             telemetry.addData("Sorry!", "This device is not compatible with TFOD");
         }
 
+        CameraDevice.getInstance().setFlashTorchMode(true);
+
         while (!opModeIsActive()){
             if (gamepad1.a)
                 craterSide = !craterSide;
@@ -130,28 +140,29 @@ public class NewAuto extends LinearOpMode
                         sleep(300);
                         move(0.4,0.5,1.0, direction.LEFT);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                        sleep(300);
+                        sleep(200);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
                         step = 1;
                     }
                     break;
-                //MOVE FORWARD AND TURN TO THE LEFT
+                //MOVE FORWARD
                 case 1:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);
-                    move(DRIVE_SPEED, 1.505, 1.0, direction.FORWARD);
+                    move(DRIVE_SPEED, 1.3, 1.0, direction.FORWARD);
                     sleep(500);
                     step = 2;
                     break;
 //                //MIDDLE CHECK, CUZ WHY NOT WE HERE ANYWAYS
                 case 2:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                    sleep(1000);
-                    while (middleCheck <= 150)
+                    sleep(2000);
+                    while (middleCheck <= 200)
                     {
                         telemetry.addData("Middle Check", middleCheck);
                         telemetry.update();
                         if (checkForGold()){
-                            step = 21;
+                            location = goldLocation.MIDDLE;
+                            step = 6;
                             break;
                         }else{ middleCheck += 1; }
                     }
@@ -162,21 +173,22 @@ public class NewAuto extends LinearOpMode
 //                //MOVE TO THE RIGHT SPOT, ONLY CUZ IT WASNT IN THE MIDDLE ALREADY
                 case 3:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                    move(0.4, 2.8, 1.0, direction.RIGHT);
-                    sleep(300);
-                    gyroTurn(DRIVE_SPEED, 1.0, 0);
+                    gyroTurn(0.6, -35.0, 0);
                     step = 4;
                     break;
 //                //RIGHT SIDE CHECK
                 case 4:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                    sleep(1000);
-                    while (rightCheck <= 150)
+                    sleep(2000);
+                    while (rightCheck <= 200)
                     {
                         telemetry.addData("Right Check", rightCheck);
                         telemetry.update();
                         if (checkForGold()){
-                            step = 21;
+                            gyroTurn(0.6, -55.0, 0);
+                            sleep(300);
+                            location = goldLocation.RIGHT;
+                            step = 6;
                             break;
                         }else{ rightCheck += 1; }
                     }
@@ -184,24 +196,54 @@ public class NewAuto extends LinearOpMode
                         step = 5;
 
                     break;
-//                case 5:
-//                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-//                    move(DRIVE_SPEED, 2.5, 1.0, direction.FORWARD);
-//                    step = 8;
-//                    break;
-//
-//                // IF IT FINDS THE CUBE IT RUNS THIS AND THEN GOES TO STEP 21
-//                // ALSO IF IT CANNOT FIND IT IN ANY OF THE OTHER SPOTS IT RUNS THIS ON LEFT SIDE
-                case 21:
+                case 5:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                    move(DRIVE_SPEED, 1.4, 1.0, direction.FORWARD);
+                    gyroTurn(0.6, 35.0, 0);
+                    location = goldLocation.LEFT;
+                    step = 6;
+                    break;
+                // IF IT FINDS THE CUBE IT RUNS THIS AND THEN GOES TO STEP 21
+                // ALSO IF IT CANNOT FIND IT IN ANY OF THE OTHER SPOTS IT RUNS THIS ON LEFT SIDE
+                case 6:
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                    if (location == goldLocation.RIGHT){
+                        move(DRIVE_SPEED, 1.8, 1.0, direction.FORWARD);
+                        step = 9;
+                    }else if (location == goldLocation.MIDDLE){
+                        move(DRIVE_SPEED, 1.3, 1.0, direction.FORWARD);
+                        step = 9;
+                    }else if (location == goldLocation.LEFT){
+
+                        step = 9;
+                    }
                     step = 9;
+                    break;
+                // MOVE TO LOCATION TO START MOVE TO DEPO
+                case 9:
+                    if (location == goldLocation.RIGHT){
+                        move(DRIVE_SPEED, 2.18, 1.0, direction.BACKWARD);
+                        gyroTurn(0.6, 65.0, 0);
+                        step = 10;
+                    }else if (location == goldLocation.MIDDLE){
+                        move(DRIVE_SPEED, 1.3, 1.0, direction.BACKWARD);
+                        gyroTurn(0.6, 65.0, 0);
+                        step = 10;
+                    }else if (location == goldLocation.LEFT){
+
+                    }
+                    break;
+                case 10:
+                    sleep(300);
+                    move(DRIVE_SPEED, 3.3, 1.0, direction.FORWARD);
+                    step = 11;
                     break;
 
             }
             telemetry.addData("Step", step);
             telemetry.update();
         }
+
+        CameraDevice.getInstance().setFlashTorchMode(false);
 
         if (tfod != null) {
             tfod.shutdown();
@@ -219,8 +261,6 @@ public class NewAuto extends LinearOpMode
                     for (Recognition recognition : updatedRecognitions) {
                         if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
                             found = true;
-                            telemetry.addData("Found gold", "");
-                            telemetry.update();
                         }
                     }
                 }
@@ -286,10 +326,10 @@ public class NewAuto extends LinearOpMode
 
     public boolean rotateToDegree(double speed, double degree, double tolerance, int side){
         angles = robot.imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        telemetry.addData("Current Angle", angles.firstAngle);
-        telemetry.addData("Angle", degree);
-        telemetry.addData("Tolerance", "%5.2f | %5.2f", degree + tolerance, degree - tolerance);
-        telemetry.update();
+//        telemetry.addData("Current Angle", angles.firstAngle);
+//        telemetry.addData("Angle", degree);
+//        telemetry.addData("Tolerance", "%5.2f | %5.2f", degree + tolerance, degree - tolerance);
+//        telemetry.update();
 
         // 15 degrees (14.2) (15.8)
 
