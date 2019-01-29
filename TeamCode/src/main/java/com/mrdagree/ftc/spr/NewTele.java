@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
+import com.vuforia.CameraDevice;
 
 @TeleOp (name = "Teleop")
 public class NewTele extends LinearOpMode {
@@ -38,9 +39,7 @@ public class NewTele extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         robot = new Robot(hardwareMap);
-
-        robot.markerServo.setPosition(0.8);
-        pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+        pattern = RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE;
 
 
 
@@ -68,7 +67,7 @@ public class NewTele extends LinearOpMode {
 
         } else {
             getJoyValues();
-            pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+            pattern = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_FOREST_PALETTE;
 
         }
 
@@ -86,9 +85,9 @@ public class NewTele extends LinearOpMode {
 
 
         if (gamepad2.left_trigger <= 0.05) {
-            armPower = (gamepad2.right_trigger / 1.5);
+            armPower = (gamepad2.right_trigger);
         } else if (gamepad2.right_trigger <= 0.05) {
-            armPower = (-gamepad2.left_trigger / 1.5);
+            armPower = (-gamepad2.left_trigger);
         }
         if (gamepad2.left_bumper) {
             armPower = (0.13);
@@ -96,7 +95,7 @@ public class NewTele extends LinearOpMode {
 
         intakePowerL = gamepad2.right_stick_y;
 
-        if (gamepad2.right_bumper) {
+        if (gamepad2.right_bumper || gamepad2.y) {
             robot.intakeHold.setPosition(1);
         } else {
             robot.intakeHold.setPosition(0);
@@ -117,6 +116,7 @@ public class NewTele extends LinearOpMode {
 
         robot.armMotor.setPower(armPower);
         robot.armMotor2.setPower(armPower);
+
         robot.intakeServoL.setPower(intakePowerL);
 
         robot.theGoodStuff.setPattern(pattern);

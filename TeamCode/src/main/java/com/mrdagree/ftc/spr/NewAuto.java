@@ -1,5 +1,8 @@
 package com.mrdagree.ftc.spr;
 
+import android.media.MediaPlayer;
+
+import com.qualcomm.ftccommon.SoundPlayer;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -80,6 +83,12 @@ public class NewAuto extends LinearOpMode
     public int middleCheck = 0;
     public int rightCheck = 0;
 
+    int yeet;
+    boolean yeetFound = false;
+
+    MediaPlayer player;
+
+
 
     @Override
     public void runOpMode() {
@@ -92,7 +101,13 @@ public class NewAuto extends LinearOpMode
             telemetry.addData("Sorry!", "This device is not compatible with TFOD");
         }
 
-        CameraDevice.getInstance().setFlashTorchMode(true);
+
+        yeet = hardwareMap.appContext.getResources().getIdentifier("yeet", "raw", hardwareMap.appContext.getPackageName());
+        if (yeet != 0)
+            yeetFound   = SoundPlayer.getInstance().preload(hardwareMap.appContext, yeet);
+
+
+        SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, yeet);
 
         while (!opModeIsActive()){
             if (gamepad1.a)
@@ -101,12 +116,16 @@ public class NewAuto extends LinearOpMode
             if (robot.bottomLift.getState()) {
                 robot.hangingMotor.setPower(-1.0);
                 robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
-            }else{ robot.hangingMotor.setPower(0.0); }
+            }else{
+                robot.hangingMotor.setPower(0.0);
+                robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
+            }
 
             robot.hangingMotor.setPower(gamepad1.right_trigger);
 
-            robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER);
 
+
+            telemetry.addData("Yah Yeet",   yeetFound ?   "Found" : "No sound found." );
             telemetry.addData("Crater Side (GP 1 A)", craterSide ? "yes" : "no");
             telemetry.update();
         }
@@ -124,13 +143,14 @@ public class NewAuto extends LinearOpMode
                 //UNLATCHING
                 case 0:
                     // Should get hanging going
+
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
+
                     if (!robot.bottomLift.getState() && robot.topLift.getState()) {
                         robot.hangingMotor.setPower(1.0);
-                        robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
                     }else if (robot.bottomLift.getState() && robot.topLift.getState()){
                         // Senses that both the magnetic limit switches arent triggered so keeps power to decend.
                         robot.hangingMotor.setPower(1.0);
-                        robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_FOREST_PALETTE);
                     }
                     else if (!robot.topLift.getState() && robot.bottomLift.getState()) {
                         // Senses that the top is triggered and bottom is not thus the lift should be at the top.
@@ -138,8 +158,7 @@ public class NewAuto extends LinearOpMode
                         sleep(300);
                         robot.hangingMotor.setPower(0);
                         sleep(300);
-                        move(0.4,0.5,1.0, direction.LEFT);
-                        robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
+                        move(0.4,0.8,1.0, direction.LEFT);
                         sleep(200);
                         robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
                         step = 1;
@@ -148,47 +167,48 @@ public class NewAuto extends LinearOpMode
                 //MOVE FORWARD
                 case 1:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);
-                    move(DRIVE_SPEED, 1.3, 1.0, direction.FORWARD);
-                    sleep(500);
+                    move(DRIVE_SPEED, 1.4, 1.0, direction.FORWARD);
+                    gyroTurn(DRIVE_SPEED, 81, 0);
+                    move(DRIVE_SPEED, 0.55, 1.0, direction.BACKWARD);
+                    sleep(400);
                     step = 2;
                     break;
-//                //MIDDLE CHECK, CUZ WHY NOT WE HERE ANYWAYS
+                //MIDDLE CHECK, CUZ WHY NOT WE HERE ANYWAYS
                 case 2:
-                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                    sleep(2000);
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+                    sleep(800);
                     while (middleCheck <= 200)
                     {
                         telemetry.addData("Middle Check", middleCheck);
                         telemetry.update();
                         if (checkForGold()){
                             location = goldLocation.MIDDLE;
-                            step = 6;
+                            step = 100;
                             break;
                         }else{ middleCheck += 1; }
                     }
                     if (step == 2)
                         step = 3;
-
                     break;
-//                //MOVE TO THE RIGHT SPOT, ONLY CUZ IT WASNT IN THE MIDDLE ALREADY
+
+                //MOVE TO THE RIGHT SPOT, ONLY CUZ IT WASNT IN THE MIDDLE ALREADY
                 case 3:
-                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                    gyroTurn(0.6, -35.0, 0);
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
+                    move(DRIVE_SPEED, 1.5, 1.0, direction.BACKWARD);
+                    sleep(800);
                     step = 4;
                     break;
-//                //RIGHT SIDE CHECK
+                //RIGHT SIDE CHECK
                 case 4:
-                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
-                    sleep(2000);
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
+                    sleep(800);
                     while (rightCheck <= 200)
                     {
                         telemetry.addData("Right Check", rightCheck);
                         telemetry.update();
                         if (checkForGold()){
-                            gyroTurn(0.6, -55.0, 0);
-                            sleep(300);
                             location = goldLocation.RIGHT;
-                            step = 6;
+                            step = 100;
                             break;
                         }else{ rightCheck += 1; }
                     }
@@ -197,46 +217,49 @@ public class NewAuto extends LinearOpMode
 
                     break;
                 case 5:
-                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                    gyroTurn(0.6, 35.0, 0);
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
+                    move(DRIVE_SPEED, 2.6, 1.0, direction.FORWARD);
                     location = goldLocation.LEFT;
-                    step = 6;
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);
+                    step = 100;
                     break;
-                // IF IT FINDS THE CUBE IT RUNS THIS AND THEN GOES TO STEP 21
-                // ALSO IF IT CANNOT FIND IT IN ANY OF THE OTHER SPOTS IT RUNS THIS ON LEFT SIDE
-                case 6:
-                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED);
-                    if (location == goldLocation.RIGHT){
-                        move(DRIVE_SPEED, 1.8, 1.0, direction.FORWARD);
-                        step = 9;
-                    }else if (location == goldLocation.MIDDLE){
-                        move(DRIVE_SPEED, 1.3, 1.0, direction.FORWARD);
-                        step = 9;
-                    }else if (location == goldLocation.LEFT){
+                // MOVE SERVO TO KNOCK OFF
+                case 100:
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);
+                    if (location != goldLocation.LEFT)
+                        move(0.4,0.6,1.0, direction.RIGHT);
+                    else
+                        move(0.4,0.9,1.0, direction.RIGHT);
+                    sleep(200);
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
+                    robot.blockServo.setPosition(0.3);
+                    sleep(350);
+                    robot.blockServo.setPosition(1.0);
+                    if (craterSide)
+                        step = 200;
+                    else
+                        step = 300;
+                    break;
+                case 200:
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);
 
-                        step = 9;
-                    }
-                    step = 9;
-                    break;
-                // MOVE TO LOCATION TO START MOVE TO DEPO
-                case 9:
-                    if (location == goldLocation.RIGHT){
-                        move(DRIVE_SPEED, 2.18, 1.0, direction.BACKWARD);
-                        gyroTurn(0.6, 65.0, 0);
-                        step = 10;
-                    }else if (location == goldLocation.MIDDLE){
-                        move(DRIVE_SPEED, 1.3, 1.0, direction.BACKWARD);
-                        gyroTurn(0.6, 65.0, 0);
-                        step = 10;
-                    }else if (location == goldLocation.LEFT){
+                    if (location == goldLocation.LEFT)
+                        move(DRIVE_SPEED, 4.5, 2.0, direction.BACKWARD);
+                    else if (location == goldLocation.MIDDLE)
+                        move(DRIVE_SPEED, 3.0, 2.0, direction.BACKWARD);
+                    else
+                        move(DRIVE_SPEED, 1.0, 2.0, direction.BACKWARD);
 
-                    }
+                    step = 201;
                     break;
-                case 10:
-                    sleep(300);
-                    move(DRIVE_SPEED, 3.3, 1.0, direction.FORWARD);
-                    step = 11;
+                case 201:
+                    gyroTurn(DRIVE_SPEED, 1, 0);
+                    move(DRIVE_SPEED, 0.8, 1.0, direction.FORWARD);
+                    sleep(400);
+                    step = 202;
                     break;
+
+
 
             }
             telemetry.addData("Step", step);
@@ -260,6 +283,10 @@ public class NewAuto extends LinearOpMode
                 if (updatedRecognitions.size() == 1) {
                     for (Recognition recognition : updatedRecognitions) {
                         if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                            SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, yeet);
+                            robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
+                            sleep(200);
+                            robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);
                             found = true;
                         }
                     }
@@ -278,7 +305,7 @@ public class NewAuto extends LinearOpMode
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
@@ -290,6 +317,7 @@ public class NewAuto extends LinearOpMode
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
                 "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        tfodParameters.minimumConfidence = 0.30;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }

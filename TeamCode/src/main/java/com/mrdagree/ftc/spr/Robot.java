@@ -35,6 +35,7 @@ public class Robot {
     //Servos
     public Servo markerServo;
     public CRServo intakeServoL;
+    public Servo blockServo;
 
     //public DigitalChannel rightMagSwitch;
     public GyroSensor armGyro;
@@ -48,6 +49,7 @@ public class Robot {
 
     public Robot(HardwareMap hardwareMap){
         theGoodStuff = hardwareMap.get(RevBlinkinLedDriver.class, "ledDriver");
+        theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER);
         topLift = hardwareMap.get(DigitalChannel.class, "topLift");
         bottomLift = hardwareMap.get(DigitalChannel.class, "bottomLift");
         topLift.setMode(DigitalChannel.Mode.INPUT);
@@ -72,6 +74,7 @@ public class Robot {
         //Intake Motors
         armMotor = hardwareMap.dcMotor.get("armMotor");
         armMotor2 = hardwareMap.dcMotor.get("armMotor2");
+        armMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Other Motors
         hangingMotor = hardwareMap.dcMotor.get("hangingMotor");
@@ -85,6 +88,9 @@ public class Robot {
         intakeServoL.setDirection(CRServo.Direction.REVERSE);
         intakeHold = hardwareMap.servo.get("intakeHold");
 
+        blockServo = hardwareMap.servo.get("blockServo");
+        blockServo.setDirection(Servo.Direction.REVERSE);
+        blockServo.setPosition(1.0);
 
 
 
