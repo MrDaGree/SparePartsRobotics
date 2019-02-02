@@ -169,7 +169,10 @@ public class NewAuto extends LinearOpMode
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);
                     move(DRIVE_SPEED, 1.4, 1.0, direction.FORWARD);
                     gyroTurn(DRIVE_SPEED, 81, 0);
-                    move(DRIVE_SPEED, 0.55, 1.0, direction.BACKWARD);
+                    if (!craterSide)
+                        move(DRIVE_SPEED, 0.4, 1.0, direction.BACKWARD);
+                    else
+                        move(DRIVE_SPEED, 0.55, 1.0, direction.BACKWARD);
                     sleep(400);
                     step = 2;
                     break;
@@ -226,15 +229,27 @@ public class NewAuto extends LinearOpMode
                 // MOVE SERVO TO KNOCK OFF
                 case 100:
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);
+
                     if (location != goldLocation.LEFT)
-                        move(0.4,0.6,1.0, direction.RIGHT);
+                        move(0.4, 0.6, 1.0, direction.RIGHT);
                     else
-                        move(0.4,0.9,1.0, direction.RIGHT);
+                        move(0.4, 0.9, 1.0, direction.RIGHT);
+
                     sleep(200);
                     robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_BLUE);
                     robot.blockServo.setPosition(0.3);
+                    SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, yeet);
                     sleep(350);
                     robot.blockServo.setPosition(1.0);
+                    sleep(300);
+
+                    if (location != goldLocation.LEFT)
+                        move(0.4, 0.1, 1.0, direction.LEFT);
+                    else
+                        move(0.4, 0.3, 1.0, direction.LEFT);
+
+                    gyroTurn(DRIVE_SPEED, 84, 0);
+
                     if (craterSide)
                         step = 200;
                     else
@@ -254,9 +269,35 @@ public class NewAuto extends LinearOpMode
                     break;
                 case 201:
                     gyroTurn(DRIVE_SPEED, 1, 0);
-                    move(DRIVE_SPEED, 0.8, 1.0, direction.FORWARD);
+                    move(DRIVE_SPEED, 1.2, 1.0, direction.FORWARD);
                     sleep(400);
                     step = 202;
+                    break;
+                case 300:
+                    robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.SINELON_RAINBOW_PALETTE);
+
+                    if (location == goldLocation.LEFT)
+                        move(DRIVE_SPEED, 1.8, 2.0, direction.FORWARD);
+                    else if (location == goldLocation.MIDDLE)
+                        move(DRIVE_SPEED, 3.8, 2.0, direction.FORWARD);
+                    else
+                        move(DRIVE_SPEED, 5.1, 2.0, direction.FORWARD);
+
+                    step = 301;
+                    break;
+                case 301:
+                    gyroTurn(DRIVE_SPEED, -40, 0);
+                    sleep(300);
+                    move(0.4, 1.2, 1.0, direction.LEFT);
+                    sleep(300);
+                    move(DRIVE_SPEED, 3.4, 2.0, direction.FORWARD);
+                    sleep(300);
+                    gyroTurn(DRIVE_SPEED, -40, 0);
+                    step = 302;
+                    break;
+                case 302:
+                    robot.markerServo.setPosition(0.6);
+                    step = 303;
                     break;
 
 
@@ -266,7 +307,6 @@ public class NewAuto extends LinearOpMode
             telemetry.update();
         }
 
-        CameraDevice.getInstance().setFlashTorchMode(false);
 
         if (tfod != null) {
             tfod.shutdown();
@@ -283,7 +323,6 @@ public class NewAuto extends LinearOpMode
                 if (updatedRecognitions.size() == 1) {
                     for (Recognition recognition : updatedRecognitions) {
                         if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                            SoundPlayer.getInstance().startPlaying(hardwareMap.appContext, yeet);
                             robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD);
                             sleep(200);
                             robot.theGoodStuff.setPattern(RevBlinkinLedDriver.BlinkinPattern.BLACK);

@@ -19,6 +19,7 @@ public class NewTele extends LinearOpMode {
     public double rrPower;
     public double intakePowerL;
 
+    public double armPowerOld;
     public double armPower;
     public double xrailPower;
     public RevBlinkinLedDriver.BlinkinPattern pattern;
@@ -72,26 +73,31 @@ public class NewTele extends LinearOpMode {
         }
 
         if (gamepad1.b) {
-            robot.markerServo.setPosition(0);
+            robot.markerServo.setPosition(0.6);
         } else {
-            robot.markerServo.setPosition(0.8);
+            robot.markerServo.setPosition(0.0);
         }
 
         lotsofcrap();
         wheelcrap();
 
 
-        //GAMEPAD 2 -- THE SIDE BITCH
+        //GAMEPAD 2 -- THE SIDE DRIVER
 
 
-        if (gamepad2.left_trigger <= 0.05) {
-            armPower = (gamepad2.right_trigger);
-        } else if (gamepad2.right_trigger <= 0.05) {
-            armPower = (-gamepad2.left_trigger);
+        if (gamepad2.left_trigger >= 0.1) {
+            armPowerOld = -gamepad2.left_trigger / 4;
+            if (-gamepad2.left_trigger <= armPowerOld)
+                armPower = -gamepad2.left_trigger / 4;
+        } else if (gamepad2.right_trigger >= 0.1) {
+            armPowerOld = gamepad2.right_trigger / 2;
+            if (gamepad2.right_trigger >= armPowerOld)
+                armPower = gamepad2.right_trigger / 2;
         }
-        if (gamepad2.left_bumper) {
-            armPower = (0.13);
-        }
+        if (gamepad2.left_bumper)
+            armPower = 0;
+
+        telemetry.addData("Old Power", gamepad2.left_trigger);
 
         intakePowerL = gamepad2.right_stick_y;
 
@@ -110,7 +116,7 @@ public class NewTele extends LinearOpMode {
         }
 
 
-        xrailPower = (gamepad2.left_stick_y);
+        xrailPower = (-gamepad2.left_stick_y);
         robot.xrailMotor.setPower(xrailPower);
 
 

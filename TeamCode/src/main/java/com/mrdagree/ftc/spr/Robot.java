@@ -84,6 +84,7 @@ public class Robot {
 
         //Servos
         markerServo = hardwareMap.servo.get("markerServo");
+        markerServo.setPosition(0.0);
         intakeServoL = hardwareMap.crservo.get("intakeServoL");
         intakeServoL.setDirection(CRServo.Direction.REVERSE);
         intakeHold = hardwareMap.servo.get("intakeHold");
